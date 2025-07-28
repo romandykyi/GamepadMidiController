@@ -23,8 +23,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libremidi)
 FetchContent_MakeAvailable(libgamepad)
 
-target_compile_definitions(libgamepad PRIVATE DEBUG=0)
-
 add_executable(GamepadMidiController
     GamepadMidiController.cpp
     GamepadMidiController.h
