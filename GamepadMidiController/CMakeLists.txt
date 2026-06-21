@@ -11,7 +11,7 @@ include(FetchContent)
 FetchContent_Declare(
     libremidi
     GIT_REPOSITORY https://github.com/celtera/libremidi.git
-    GIT_TAG        v5.3.1
+    GIT_TAG        v5.4.3
 )
 # libgamepad
 FetchContent_Declare(
@@ -28,5 +28,9 @@ add_executable(GamepadMidiController
     GamepadMidiController.h
 )
 
-target_link_libraries(GamepadMidiController PRIVATE libremidi::libremidi)
+target_include_directories(GamepadMidiController PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/input)
+target_include_directories(GamepadMidiController PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/output)
+target_include_directories(GamepadMidiController PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/processor)
+
+target_link_libraries(GamepadMidiController PRIVATE libremidi)
 target_link_libraries(GamepadMidiController PRIVATE gamepad)
