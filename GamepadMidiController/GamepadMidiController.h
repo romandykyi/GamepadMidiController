@@ -4,10 +4,15 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
+#define NOMINMAX // Disable windows macros, because they suck
 
 #include <libgamepad.hpp>
 #include <iostream>
 #include <cstdio>
 #include <cmath>
+#include <cstdint>
+#include <limits>
 #include <libremidi/libremidi.hpp>
 #include <libremidi/message.hpp>
+
+#include "midi1_output.h"

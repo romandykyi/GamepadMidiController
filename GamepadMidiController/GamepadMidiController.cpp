@@ -1,8 +1,14 @@
 ﻿#include "GamepadMidiController.h"
 
-libremidi::midi_out midi;
+std::optional<gamepad_midi::midi1_output> midi_out;
 
 const double DEADZONE = 0.3;
+const uint32_t DEFAULT_VELOCITY = 3381864012; // Velocity equal to 100
+
+static double humanize_velocity(uint32_t velocity)
+{
+	return round(static_cast<double>(velocity) / std::numeric_limits<uint32_t>::max() * 100) / 100;
+}
 
 static std::optional<libremidi::output_port> select_midi_out_port()
 {
@@ -48,19 +54,19 @@ static std::optional<libremidi::output_port> select_midi_out_port()
 	}
 }
 
-static void note_msg(float value, uint8_t channel, uint8_t note, uint8_t velocity)
+static void note_msg(float value, uint8_t channel, uint8_t note, uint32_t velocity)
 {
 	std::cout << "Note event: Channel: " << static_cast<int>(channel)
 		<< ", Note: " << static_cast<int>(note)
-		<< ", Velocity: " << static_cast<int>(velocity)
+		<< ", Velocity: " << humanize_velocity(velocity)
 		<< ", Value: " << value << '\n';
 	if (value < 0.5f)
 	{
-		midi.send_message(libremidi::channel_events::note_off(channel, note, velocity));
+		midi_out->note_off(channel, note, velocity);
 	}
 	else
 	{
-		midi.send_message(libremidi::channel_events::note_on(channel, note, velocity));
+		midi_out->note_on(channel, note, velocity);
 	}
 }
 
@@ -71,16 +77,16 @@ static void button_handler(std::shared_ptr<gamepad::device> dev)
 	switch (event->vc)
 	{
 	case gamepad::button::A:
-		note_msg(event->virtual_value, 1, 36, 100);
+		note_msg(event->virtual_value, 1, 36, DEFAULT_VELOCITY);
 		break;
 	case gamepad::button::X:
-		note_msg(event->virtual_value, 1, 38, 100);
+		note_msg(event->virtual_value, 1, 38, DEFAULT_VELOCITY);
 		break;
 	case gamepad::button::B:
-		note_msg(event->virtual_value, 1, 42, 100);
+		note_msg(event->virtual_value, 1, 42, DEFAULT_VELOCITY);
 		break;
 	case gamepad::button::Y:
-		note_msg(event->virtual_value, 1, 46, 100);
+		note_msg(event->virtual_value, 1, 46, DEFAULT_VELOCITY);
 		break;
 	default:
 		std::cout << "Button event: Native id: " << event->native_id
@@ -92,10 +98,9 @@ static void button_handler(std::shared_ptr<gamepad::device> dev)
 
 static void axis_cc(float value, uint8_t channel, uint8_t control)
 {
-	value = std::round(value * 127.0f);
-	uint8_t midi_value = static_cast<uint8_t>(value);
+	uint32_t midi_value = static_cast<uint32_t>(static_cast<double>(std::numeric_limits<uint32_t>::max()) * value);
 
-	midi.send_message(libremidi::channel_events::control_change(channel, control, midi_value));
+	midi_out->cc(channel, control, midi_value);
 }
 
 static void axis_handler(std::shared_ptr<gamepad::device> dev)
@@ -117,22 +122,22 @@ static void axis_handler(std::shared_ptr<gamepad::device> dev)
 	}
 }
 
-static void chord_msg(bool press, const std::vector<uint8_t>& notes, uint8_t channel, uint8_t velocity)
+static void chord_msg(bool press, const std::vector<uint8_t>& notes, uint8_t channel, uint32_t velocity)
 {
 	std::cout << "Chord event: Channel: " << static_cast<int>(channel)
 		<< ", First Note: " << static_cast<int>(notes[0])
-		<< ", Velocity: " << static_cast<int>(velocity)
+		<< ", Velocity: " << humanize_velocity(velocity)
 		<< ", Action: " << (press ? "hold" : "release") << '\n';
 
 	for (uint8_t note : notes)
 	{
 		if (press)
 		{
-			midi.send_message(libremidi::channel_events::note_on(channel, note, velocity));
+			midi_out->note_on(channel, note, velocity);
 		}
 		else
 		{
-			midi.send_message(libremidi::channel_events::note_off(channel, note, velocity));
+			midi_out->note_off(channel, note, velocity);
 		}
 	}
 }
@@ -172,12 +177,12 @@ static void process_chords(const std::vector<std::vector<uint8_t>>& chord_notes,
 
 	if (prev_index != -1)
 	{
-		chord_msg(false, chord_notes[prev_index], 2, 100);
+		chord_msg(false, chord_notes[prev_index], 2, DEFAULT_VELOCITY);
 	}
 
 	if (index != -1)
 	{
-		chord_msg(true, chord_notes[index], 2, 100);
+		chord_msg(true, chord_notes[index], 2, DEFAULT_VELOCITY);
 	}
 
 	prev_index = index;
@@ -195,7 +200,11 @@ int main()
 	std::cout << "\n";
 	std::cout << "Selected port: " << out_port->port_name << '\n';
 
+	libremidi::midi_out midi;
 	midi.open_port(out_port.value());
+	midi_out.emplace(
+		gamepad_midi::midi1_output(midi)
+	);
 
 	auto h = gamepad::hook::make();
 	h->set_plug_and_play(true, gamepad::ms(1000));
@@ -243,8 +252,6 @@ int main()
 
 		process_chords(right_notes, r_prev_index, rx, ry);
 	}
-
-	midi.close_port();
 
 	return 0;
 }
