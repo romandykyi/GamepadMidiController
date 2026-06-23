@@ -26,6 +26,7 @@ FetchContent_MakeAvailable(libgamepad)
 add_executable(GamepadMidiController
     GamepadMidiController.cpp
     GamepadMidiController.h
+    output/midi1_output.cpp
 )
 
 target_include_directories(GamepadMidiController PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/input)
