@@ -3,16 +3,16 @@
 
 #include <concepts>
 #include <cstdint>
-#include "button_state.h"
+#include "gamepad_scheme.h"
 
 namespace gamepad_midi
 {    
     template<typename t_receiver>
     concept input_receiver = requires(
         t_receiver r, 
-        uint16_t button_code, 
+        gamepad_button button_code, 
         button_state button_state, 
-        uint16_t axis_code,
+        gamepad_axis axis_code,
         int16_t axis_value
     ) {
         { r.on_button_event(button_code, button_state) } -> std::same_as<void>;
