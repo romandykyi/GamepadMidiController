@@ -2,7 +2,7 @@
 #define G2M_PROCESSOR_H
 
 #include <cstdint>
-#include "button_state.h"
+#include "gamepad_scheme.h"
 
 namespace gamepad_midi
 {
@@ -29,8 +29,8 @@ namespace gamepad_midi
     public:
         g2m_processor(t_midi_out midi_out);
 
-        void on_button_event(uint16_t button_code, button_state button_state);
-        void on_axis_event(uint16_t axis_code, int16_t axis_value);
+        void on_button_event(gamepad_button button_code, button_state button_state);
+        void on_axis_event(gamepad_axis axis_code, int16_t axis_value);
     };
 }
 
