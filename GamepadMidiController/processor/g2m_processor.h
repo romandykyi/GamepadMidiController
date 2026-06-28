@@ -11,7 +11,9 @@ namespace gamepad_midi
     constexpr uint8_t SKIP_NOTE = std::numeric_limits<uint8_t>::max();
     constexpr uint8_t SKIP_CONTROL = std::numeric_limits<uint8_t>::max();
     constexpr uint32_t DEFAULT_VELOCITY = 3381864012;
-    constexpr float DEADZONE = 0.3f; // TODO: replace with config
+    constexpr float JOYSTICK_DEADZONE = 0.3f; // TODO: replace with config
+    constexpr int32_t AXIS_DEADZONE = 100; // TODO: replace with config (?)
+    constexpr int32_t AXIS_CHANGE_SENSITIVITY = 100; // TODO: replace with config (?)
 
     template<typename t_midi_out>
     concept midi_out = requires(
