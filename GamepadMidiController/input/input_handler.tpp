@@ -11,7 +11,7 @@ namespace gamepad_midi
     input_handler<t_receiver>::input_handler(t_receiver eventReceiver) : _eventReceiver(std::move(eventReceiver)) {}
 
     template <input_receiver t_receiver>
-    int32_t input_handler<t_receiver>::quantize_axis_value(float value) const
+    int32_t input_handler<t_receiver>::quantize_axis_value(float value)
     {
         return value > 0
             ? static_cast<int32_t>(static_cast<double>(std::numeric_limits<int32_t>::max()) * value)
