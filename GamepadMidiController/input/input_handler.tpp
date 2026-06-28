@@ -1,6 +1,9 @@
+#ifndef INPUT_HANDLER_H // Hint for IDEs
+#include "input_handler.h"
+#endif
+
 #include <algorithm>
 #include <utility>
-#include <libremidi/message.hpp>
 
 const uint32_t DEFAULT_VELOCITY = 3381864012;
 
