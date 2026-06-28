@@ -49,10 +49,8 @@ You select one (for example, a loopMIDI virtual port on Windows), and from then 
 5. Start playing! Press gamepad buttons to trigger notes. Move triggers or sticks for expressive control.
 
 ## Customization 
-You can modify the mappings directly in `GamepadMidiController.cpp`:
-- Change MIDI note numbers or channels in the button_handler() or axis_handler() functions.
-- Adjust the DEADZONE constant for analog stick sensitivity.
-- Replace or expand the chord sets in left_notes and right_notes.
+
+To be implemented. . .
 
 ## Used libraries
 - https://github.com/celtera/libremidi
