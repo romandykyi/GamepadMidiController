@@ -2,6 +2,7 @@
 #include "g2m_processor.h"
 #endif
 
+#include <cmath>
 #include <limits>
 #include <utility>
 
@@ -64,7 +65,7 @@ namespace gamepad_midi
         y = -y;
 
         float magnitude = std::sqrt(x * x + y * y);
-        if (magnitude < DEADZONE)
+        if (magnitude < JOYSTICK_DEADZONE)
         {
             return -1; // Outside of the deadzone
         }
@@ -144,7 +145,19 @@ namespace gamepad_midi
     template <midi_out t_midi_out>
     void g2m_processor<t_midi_out>::on_axis_event(gamepad_axis axis_code, int32_t axis_value)
     {
-        _axis_value[static_cast<size_t>(axis_code)] = axis_value;
+        size_t axis_index = static_cast<size_t>(axis_code);
+        int32_t prev_axis_value = _axis_value[axis_index];
+
+        if (std::abs(axis_value) < AXIS_DEADZONE)
+        {
+            axis_value = 0;
+        }
+        if (std::abs(axis_value - prev_axis_value) < AXIS_CHANGE_SENSITIVITY)
+        {
+            return;
+        }
+
+        _axis_value[axis_index] = axis_value;
 
         uint8_t control = axis_to_control(axis_code);
         if (control == SKIP_CONTROL) return;
