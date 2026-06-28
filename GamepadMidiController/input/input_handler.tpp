@@ -19,38 +19,15 @@ namespace gamepad_midi
     }
 
     template <input_receiver t_receiver>
-    void input_handler<t_receiver>::process_axis(uint16_t axis)
+    void input_handler<t_receiver>::process_axis(uint16_t axis, gamepad_axis out_axis)
     {
         float value = std::clamp(_hook->get_devices()[0]->get_axis(axis), -1.0f, 1.0f);
         int32_t quant_value = quantize_axis_value(value);
         
         _eventReceiver.on_axis_event(
-            static_cast<gamepad_axis>(axis),
+            out_axis,
             quant_value
         );
-    }
-
-    template <input_receiver t_receiver>
-    void input_handler<t_receiver>::axis_handler(std::shared_ptr<gamepad::device> dev)
-    {
-        auto event = dev->last_axis_event();
-
-        gamepad_axis axis;
-        switch (event->vc)
-        {
-            case gamepad::axis::RIGHT_TRIGGER:
-                axis = gamepad_axis::RT;
-                break;
-            case gamepad::axis::LEFT_TRIGGER:
-                axis = gamepad_axis::LT;
-                break;
-            default:
-                return;
-        }
-        float value = std::clamp(event->virtual_value, -1.0f, 1.0f);
-        int32_t quant_value = quantize_axis_value(value);
-
-        _eventReceiver.on_axis_event(axis, quant_value);
     }
 
     template <input_receiver t_receiver>
@@ -88,7 +65,6 @@ namespace gamepad_midi
     {
         _hook = gamepad::hook::make();
 	    _hook->set_plug_and_play(true, gamepad::ms(1000));
-        _hook->set_axis_event_handler([this] (std::shared_ptr<gamepad::device> dev) { this->axis_handler(dev); });
         _hook->set_button_event_handler([this] (std::shared_ptr<gamepad::device> dev) { this->button_handler(dev); });
 
         // TODO: add better error handling
@@ -102,21 +78,12 @@ namespace gamepad_midi
     template <input_receiver t_receiver>
     void input_handler<t_receiver>::poll(void) 
     {
-        // TODO: add better error handling
-        if (_hook == nullptr)
-        {
-            std::cerr << "Hook is not initialized" << std::endl;
-        }
-        if (_hook->get_devices().empty())
-        {
-            std::cerr << "No device was found" << std::endl;
-            return;
-        }
-
-        process_axis(gamepad::axis::LEFT_STICK_X);
-        process_axis(gamepad::axis::LEFT_STICK_Y);
-        process_axis(gamepad::axis::RIGHT_STICK_X);
-        process_axis(gamepad::axis::RIGHT_STICK_Y);
+        process_axis(gamepad::axis::LEFT_TRIGGER, gamepad_axis::LT);
+        process_axis(gamepad::axis::RIGHT_TRIGGER, gamepad_axis::RT);
+        process_axis(gamepad::axis::LEFT_STICK_X, gamepad_axis::LS_X);
+        process_axis(gamepad::axis::LEFT_STICK_Y, gamepad_axis::LS_Y);
+        process_axis(gamepad::axis::RIGHT_STICK_X, gamepad_axis::RS_X);
+        process_axis(gamepad::axis::RIGHT_STICK_Y, gamepad_axis::RS_Y);
 
         _eventReceiver.on_poll_end();
     }
