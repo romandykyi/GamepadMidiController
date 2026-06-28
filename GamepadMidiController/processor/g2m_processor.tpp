@@ -14,4 +14,10 @@ namespace gamepad_midi
     void g2m_processor<t_midi_out>::on_axis_event(gamepad_axis axis_code, int16_t axis_value)
     {
     }
+
+    template <midi_out t_midi_out>
+    void g2m_processor<t_midi_out>::on_poll_end(void)
+    {
+        
+    }
 }

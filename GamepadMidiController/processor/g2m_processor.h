@@ -31,6 +31,7 @@ namespace gamepad_midi
 
         void on_button_event(gamepad_button button_code, button_state button_state);
         void on_axis_event(gamepad_axis axis_code, int16_t axis_value);
+        void on_poll_end(void);
     };
 }
 

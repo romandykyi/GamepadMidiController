@@ -17,7 +17,8 @@ namespace gamepad_midi
         int32_t axis_value
     ) {
         { r.on_button_event(button_code, button_state) } -> std::same_as<void>;
-        { r.on_axis_event(axis_code, axis_value)} -> std::same_as<void>;
+        { r.on_axis_event(axis_code, axis_value) } -> std::same_as<void>;
+        { r.on_poll_end() } -> std::same_as<void>;
     };
 
     template <input_receiver t_receiver>
