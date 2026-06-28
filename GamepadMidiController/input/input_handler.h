@@ -28,7 +28,7 @@ namespace gamepad_midi
         t_receiver _eventReceiver;
         std::shared_ptr<gamepad::hook> _hook;
 
-        int32_t quantize_axis_value(float value) const;
+        static int32_t quantize_axis_value(float value);
         
         void process_axis(uint16_t axis);
 
