@@ -97,5 +97,7 @@ namespace gamepad_midi
         process_axis(gamepad::axis::LEFT_STICK_Y);
         process_axis(gamepad::axis::RIGHT_STICK_X);
         process_axis(gamepad::axis::RIGHT_STICK_Y);
+
+        _eventReceiver.on_poll_end();
     }
 }
