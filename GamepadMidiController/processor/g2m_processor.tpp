@@ -1,4 +1,9 @@
+#ifndef G2M_PROCESSOR_H // Hint for IDEs
+#include "g2m_processor.h"
+#endif
+
 #include <utility>
+
 namespace gamepad_midi
 {
     template <midi_out t_midi_out>

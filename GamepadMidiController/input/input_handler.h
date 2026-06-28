@@ -3,7 +3,7 @@
 
 #include <concepts>
 #include <cstdint>
-#include <libremidi/libremidi.hpp>
+#include <libgamepad.hpp>
 #include "gamepad_scheme.h"
 
 namespace gamepad_midi
