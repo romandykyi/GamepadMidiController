@@ -12,7 +12,11 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <thread>
+#include <chrono>
 #include <libremidi/libremidi.hpp>
 #include <libremidi/message.hpp>
 
 #include "midi1_output.h"
+#include "g2m_processor.h"
+#include "input_handler.h"
