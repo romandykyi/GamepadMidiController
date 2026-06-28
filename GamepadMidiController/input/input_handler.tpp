@@ -8,7 +8,7 @@
 namespace gamepad_midi
 {
     template <input_receiver t_receiver>
-    input_handler<t_receiver>::input_handler(t_receiver eventReceiver) : _eventReceiver(std::move(eventReceiver)) {}
+    input_handler<t_receiver>::input_handler(t_receiver& eventReceiver) : _eventReceiver(eventReceiver) {}
 
     template <input_receiver t_receiver>
     int32_t input_handler<t_receiver>::quantize_axis_value(float value)
@@ -21,10 +21,13 @@ namespace gamepad_midi
     template <input_receiver t_receiver>
     void input_handler<t_receiver>::process_axis(uint16_t axis)
     {
-        float value = std::clamp(_hook->get_devices()[0]->get_axis(axis), -1, 1);
+        float value = std::clamp(_hook->get_devices()[0]->get_axis(axis), -1.0f, 1.0f);
         int32_t quant_value = quantize_axis_value(value);
         
-        _eventReceiver.on_axis_event(axis, quant_value);
+        _eventReceiver.on_axis_event(
+            static_cast<gamepad_axis>(axis),
+            quant_value
+        );
     }
 
     template <input_receiver t_receiver>
@@ -44,7 +47,7 @@ namespace gamepad_midi
             default:
                 return;
         }
-        float value = std::clamp(event->virtual_value, -1.0, 1.0);
+        float value = std::clamp(event->virtual_value, -1.0f, 1.0f);
         int32_t quant_value = quantize_axis_value(value);
 
         _eventReceiver.on_axis_event(axis, quant_value);
@@ -85,14 +88,30 @@ namespace gamepad_midi
     {
         _hook = gamepad::hook::make();
 	    _hook->set_plug_and_play(true, gamepad::ms(1000));
-        _hook->set_axis_event_handler(axis_handler);
-        _hook->set_button_event_handler(button_handler);
+        _hook->set_axis_event_handler([this] (std::shared_ptr<gamepad::device> dev) { this->axis_handler(dev); });
+        _hook->set_button_event_handler([this] (std::shared_ptr<gamepad::device> dev) { this->button_handler(dev); });
+
+        // TODO: add better error handling
+        if (!_hook->start()) 
+        {
+            std::cerr << "Failed to start hook" << std::endl;
+            return;
+        }
     }
 
     template <input_receiver t_receiver>
     void input_handler<t_receiver>::poll(void) 
     {
-        if (_hook == nullptr) return;
+        // TODO: add better error handling
+        if (_hook == nullptr)
+        {
+            std::cerr << "Hook is not initialized" << std::endl;
+        }
+        if (_hook->get_devices().empty())
+        {
+            std::cerr << "No device was found" << std::endl;
+            return;
+        }
 
         process_axis(gamepad::axis::LEFT_STICK_X);
         process_axis(gamepad::axis::LEFT_STICK_Y);
