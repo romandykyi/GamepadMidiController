@@ -30,9 +30,8 @@ namespace gamepad_midi
 
         static int32_t quantize_axis_value(float value);
         
-        void process_axis(uint16_t axis);
+        void process_axis(uint16_t axis, gamepad_axis out_axis);
 
-        void axis_handler(std::shared_ptr<gamepad::device> dev);
         void button_handler(std::shared_ptr<gamepad::device> dev);
 
     public:
