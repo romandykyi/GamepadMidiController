@@ -5,8 +5,6 @@
 #include <algorithm>
 #include <utility>
 
-const uint32_t DEFAULT_VELOCITY = 3381864012;
-
 namespace gamepad_midi
 {
     template <input_receiver t_receiver>

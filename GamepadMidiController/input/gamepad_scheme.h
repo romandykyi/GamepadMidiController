@@ -11,6 +11,7 @@ namespace gamepad_midi
         RELEASED
     };
 
+    constexpr int GAMEPAD_BUTTONS_COUNT = 16;
     enum class gamepad_button : std::uint8_t
     {
         NORTH,
@@ -28,15 +29,18 @@ namespace gamepad_midi
         START,
         BACK,
         LSB,
-        RSB
+        RSB,
+        COUNT // Must be the last element
     };
 
     enum class gamepad_stick : std::uint8_t
     {
         LEFT,
-        RIGHT
+        RIGHT,
+        COUNT // Must be the last element
     };
 
+    constexpr int AXES_COUNT = 6;
     enum class gamepad_axis : std::uint8_t
     {
         LS_X,
@@ -44,7 +48,8 @@ namespace gamepad_midi
         RS_X,
         RS_Y,
         RT,
-        LT
+        LT,
+        COUNT // Must be the last element
     };
 }
 
