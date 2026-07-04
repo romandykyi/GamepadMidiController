@@ -11,7 +11,6 @@ namespace gamepad_midi
         RELEASED
     };
 
-    constexpr int GAMEPAD_BUTTONS_COUNT = 16;
     enum class gamepad_button : std::uint8_t
     {
         NORTH,
@@ -32,6 +31,7 @@ namespace gamepad_midi
         RSB,
         COUNT // Must be the last element
     };
+    inline constexpr size_t GAMEPAD_BUTTONS_NUM = static_cast<size_t>(gamepad_button::COUNT);
 
     enum class gamepad_stick : std::uint8_t
     {
@@ -39,8 +39,8 @@ namespace gamepad_midi
         RIGHT,
         COUNT // Must be the last element
     };
+    inline constexpr size_t GAMEPAD_STICKS_NUM = static_cast<size_t>(gamepad_stick::COUNT);
 
-    constexpr int AXES_COUNT = 6;
     enum class gamepad_axis : std::uint8_t
     {
         LS_X,
@@ -51,6 +51,7 @@ namespace gamepad_midi
         LT,
         COUNT // Must be the last element
     };
+    inline constexpr size_t GAMEPAD_AXES_NUM = static_cast<size_t>(gamepad_axis::COUNT);
 }
 
 #endif // BUTTON_STATE_H

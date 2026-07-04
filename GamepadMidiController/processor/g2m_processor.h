@@ -34,7 +34,7 @@ namespace gamepad_midi
     {    
     private:
         t_midi_out _midi_out;
-        std::array<int32_t, static_cast<size_t>(gamepad_axis::COUNT)> _axis_value = {};
+        std::array<int32_t, GAMEPAD_AXES_NUM> _axis_value = {};
         int _ls_index, _rs_index;
 
         uint8_t button_to_note(gamepad_button button) const;
