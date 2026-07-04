@@ -15,19 +15,50 @@ namespace gamepad_midi
     constexpr int32_t AXIS_DEADZONE = 100; // TODO: replace with config (?)
     constexpr int32_t AXIS_CHANGE_SENSITIVITY = 100; // TODO: replace with config (?)
 
-    template<typename t_midi_out>
-    concept midi_out = requires(
-        t_midi_out o, 
-        uint8_t note, 
-        uint8_t channel, 
-        uint8_t control,
-        uint32_t velocity,
-        uint32_t value
-    ) {
-        { o.note_on(note, channel, velocity) } -> std::same_as<void>;
-        { o.note_off(note, channel, velocity)} -> std::same_as<void>;
-        { o.cc(channel, control, value)} -> std::same_as<void>;
+    /**
+     * @brief Requires support for sending MIDI note on event.
+     * 
+     * @param note A note to be sent.
+     * @param channel A MIDI channel to use.
+     * @param velocity The note's velocity.
+     */
+    template<typename T>
+    concept has_note_on = requires(T r, uint8_t note, uint8_t channel, uint32_t velocity) {
+        { r.note_on(note, channel, velocity) } -> std::same_as<void>;
     };
+
+    /**
+     * @brief Requires support for sending MIDI note off event.
+     * 
+     * @param note A note to be sent.
+     * @param channel A MIDI channel to use.
+     * @param velocity The note's velocity.
+     */
+    template<typename T>
+    concept has_note_off = requires(T r, uint8_t note, uint8_t channel, uint32_t velocity) {
+        { r.note_off(note, channel, velocity) } -> std::same_as<void>;
+    };
+
+    /**
+     * @brief Requires support for sending MIDI CC event.
+     * 
+     * @param channel A MIDI channel to use.
+     * @param control A MIDI control to be sent.
+     * @param value The control's value.
+     */
+    template<typename T>
+    concept has_cc = requires(T r, uint8_t channel, uint8_t control, uint32_t value) {
+        { r.cc(channel, control, value) } -> std::same_as<void>;
+    };
+
+    /**
+     * @brief A concept for a component that sends MIDI events.
+     */
+    template<typename t_midi_out>
+    concept midi_out = 
+        has_note_on<t_midi_out> &&
+        has_note_off<t_midi_out> &&
+        has_cc<t_midi_out>;
 
     template <midi_out t_midi_out>
     class g2m_processor
