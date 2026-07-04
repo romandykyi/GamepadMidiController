@@ -8,7 +8,7 @@
 namespace gamepad_midi
 {
     template <input_receiver t_receiver>
-    input_handler<t_receiver>::input_handler(t_receiver& eventReceiver) : _eventReceiver(eventReceiver) {}
+    input_handler<t_receiver>::input_handler(t_receiver& event_receiver) : _event_receiver(event_receiver) {}
 
     template <input_receiver t_receiver>
     int32_t input_handler<t_receiver>::quantize_axis_value(float value)
@@ -24,7 +24,7 @@ namespace gamepad_midi
         float value = std::clamp(_hook->get_devices()[0]->get_axis(axis), -1.0f, 1.0f);
         int32_t quant_value = quantize_axis_value(value);
         
-        _eventReceiver.on_axis_event(
+        _event_receiver.on_axis_event(
             out_axis,
             quant_value
         );
@@ -54,7 +54,7 @@ namespace gamepad_midi
                 return;
         }
         
-        _eventReceiver.on_button_event(
+        _event_receiver.on_button_event(
             button, 
             event->virtual_value > 0.5 ? button_state::PRESSED : button_state::RELEASED
         );
@@ -85,6 +85,6 @@ namespace gamepad_midi
         process_axis(gamepad::axis::RIGHT_STICK_X, gamepad_axis::RS_X);
         process_axis(gamepad::axis::RIGHT_STICK_Y, gamepad_axis::RS_Y);
 
-        _eventReceiver.on_poll_end();
+        _event_receiver.on_poll_end();
     }
 }
