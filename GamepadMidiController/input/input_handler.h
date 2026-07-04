@@ -51,7 +51,7 @@ namespace gamepad_midi
     class input_handler
     {
     private:
-        t_receiver& _eventReceiver;
+        t_receiver& _event_receiver;
         std::shared_ptr<gamepad::hook> _hook;
 
         static int32_t quantize_axis_value(float value);
@@ -61,7 +61,7 @@ namespace gamepad_midi
         void button_handler(std::shared_ptr<gamepad::device> dev);
 
     public:
-        input_handler(t_receiver& eventReceiver);
+        input_handler(t_receiver& event_receiver);
         
         void start_listening(void);
         void poll(void);
